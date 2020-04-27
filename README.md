@@ -32,9 +32,37 @@ Below the pool table, the screen will display the balls already pocketed by eith
 
 ![8ball pool wireframe](/8ball_wireframe.png)
 
-
 ## 4. Architecture and Technology
+
+The project will be implemented with:
+* JavaScript for the overall gaming logic
+* CanvasHTML for graphics and animation rendering
+* Webpack as the JS module bundler
+
+In addition to the entry file, there will be the following scripts to support the project:
+* ball.js: The script will house the constructor and update functions for Ball objects. Each Ball will contain a number (1-15, null), color, marking (striped, solid, null), and a canvas position.
+
+* table.js: The script will keep track of the state of the game. The Table object will hold an array of Balls. It will be responsible for checking and updating the position of each Ball, once the player hits the cue ball during their turn.
+
+* game.js: The script will contain the connection between user interaction and the effects on the Table and Balls, including logic for rendering canvasHTML elements to the DOM.
 
 ## 5. Implementation Timeline
 
+### Day 1
+Set up webpack and Node modules. Write rudimentary entry files and skeletons for supporting scripts. Review canvasHTML to brush up on knowledge & animation loops.
+
+### Day 2
+Build out Ball object completely (constructor & update functions). Build out table.js enough to display the starting state of the pool table (triangle formation and cue ball). Connect table.js with game.js to initialize/reset the Table depending on user control. Review physics knowledge to understand how hitting the cue ball would affect the changes in the state of the Table (taking into account direction, speed, and friction). Start implementing backend Table logic to update the position of the balls over time, once the cue ball has been hit.
+
+### Day 3
+Complete the backend Table logic for how its state changes over time & updates to the Ball objects array, based on a given shot angle / speed / direction to the cue ball. Implement game.js gameplay logic to enable players to take turns & interpret user interaction (moving the cue stick). Incorporate Table logic into game.js rendering.
+
+### Day 4
+Wrap up any to-do's carried over from the prior days. Style front end of the game to a polished state. Add "How to Play" modal.
+
 ## 6. Bonus Features
+
+Potential features to explore in the future:
+* Incorporate in more complex game logic to more closely align to eight-ball pool rules (e.g., dealing with scratches)
+* Leverage web sockets to enable players to play live on two devices (vs. on taking turns on same device)
+* Add alternative game modes for other billiard-type games (e.g., snooker)
