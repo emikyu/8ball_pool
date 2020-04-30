@@ -1,7 +1,7 @@
 export const BALL_CONSTANTS = {
     RADIUS: 8.5,
     BORDER_COLOR: "gray",
-    FRICTION: 0.005
+    FRICTION: 0.01
 };
 
 export class PoolBall {

@@ -86,9 +86,11 @@ export default class EightBallPool {
             else {
                 if (poolBall.x - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[0] - innerBorder / 2) {
                     poolBall.vx = -poolBall.vx;
+                    // poolBall.vy *= energyLoss;
                 }
                 if (poolBall.y - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[1] + innerBorder / 2 || poolBall.y + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[1] - innerBorder / 2) {
                     poolBall.vy = -poolBall.vy;
+                    // poolBall.vx *= energyLoss;
                 }
             }
         });
@@ -96,10 +98,10 @@ export default class EightBallPool {
     }
 
     isNearPocket(poolBall) {
-        const left = this.innerTopLeft[0] + innerBorder / 2 + BALL_CONSTANTS.RADIUS;
-        const top = this.innerTopLeft[1] + innerBorder / 2 + BALL_CONSTANTS.RADIUS;
-        const right = this.innerBottomRight[0] - innerBorder / 2 - BALL_CONSTANTS.RADIUS;
-        const bottom = this.innerBottomRight[1] - innerBorder / 2 - BALL_CONSTANTS.RADIUS;
+        const left = this.innerTopLeft[0] + innerBorder + BALL_CONSTANTS.RADIUS;
+        const top = this.innerTopLeft[1] + innerBorder + BALL_CONSTANTS.RADIUS;
+        const right = this.innerBottomRight[0] - innerBorder - BALL_CONSTANTS.RADIUS;
+        const bottom = this.innerBottomRight[1] - innerBorder - BALL_CONSTANTS.RADIUS;
         const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS;
         const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS;
 
@@ -170,7 +172,7 @@ export default class EightBallPool {
         const initVelocity = { x: 0, y: 0};
         const poolBalls = [];
         // initiate cue ball -- change initial x speed for testing
-        poolBalls[0] = new PoolBall(positions[0], {x: 0, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
+        poolBalls[0] = new PoolBall(positions[0], {x: 15, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
         // initiate 8-ball
         poolBalls[5] = new PoolBall(positions[5], initVelocity, POOL_BALLS[8].number, POOL_BALLS[8].color, POOL_BALLS[8].marking);
 
