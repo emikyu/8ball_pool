@@ -20,6 +20,8 @@ const POOL_BALLS = [
     { number: 15, color: "brown", marking: "striped" }
 ];
 
+const FRAMES = 20;
+
 // const energyLoss = 0.9;
 
 export default class EightBallPool {
@@ -34,16 +36,23 @@ export default class EightBallPool {
 
         this.pocketedBalls = [];
 
+        this.playerOne = { marking: null };
+        this.playerTwo = { marking: null };
+        this.currentPlayer = this.playerOne;
+
     } 
 
     animate() {
-        this.table.animate(this.ctx);
+        for (let i = 0; i < FRAMES; i ++) {
+            this.table.animate(this.ctx);
 
-        this.poolBalls.forEach(poolBall => {
-            poolBall.move(this.ctx);
-        });
-        this.checkCollisions();
-        this.checkPocketsAndBoundary();
+            this.poolBalls.forEach(poolBall => {
+                poolBall.move(this.ctx);
+            });
+            this.checkCollisions();
+            this.checkPocketsAndBoundary();
+        }
+
         this.poolBalls.forEach(poolBall => {
             poolBall.animate(this.ctx);
         });
@@ -56,6 +65,10 @@ export default class EightBallPool {
         // }
         
         if (this.running) requestAnimationFrame(this.animate.bind(this));
+    }
+
+    drawGameStatus() {
+        
     }
 
     // check for collisions among pool balls
@@ -77,19 +90,48 @@ export default class EightBallPool {
     checkPocketsAndBoundary() {
         this.poolBalls.forEach((poolBall, idx) => {
             const isNearPocket = this.isNearPocket(poolBall);
+            const r = BALL_CONSTANTS.RADIUS;
 
             if (this.isPocketed(poolBall)) {
                 this.pocketedBalls.push(poolBall);
                 this.poolBalls[idx] = null;
             } else if (isNearPocket) {
-                debugger
+                isNearPocket.forEach(side => {
+                    switch(side.dir) {
+                        case "bottomLeft":
+                            // debugger
+                            if (Math.abs((poolBall.y + r / Math.sqrt(2)) + side.slope * (poolBall.x - r / Math.sqrt(2)) - side.intercept) < 1) {
+                                [poolBall.vx, poolBall.vy] = [poolBall.vy, poolBall.vx];
+                            }
+                            break;
+                        case "bottomRight":
+                            // debugger
+                            if (Math.abs((poolBall.y + r / Math.sqrt(2)) + side.slope * (poolBall.x + r / Math.sqrt(2)) - side.intercept) < 1) {
+                                [poolBall.vx, poolBall.vy] = [-poolBall.vy, -poolBall.vx];
+                            }
+                            break;
+                        case "topLeft":
+                            // debugger
+                            if (Math.abs((poolBall.y - r / Math.sqrt(2)) + side.slope * (poolBall.x - r / Math.sqrt(2)) - side.intercept) < 1) {
+                                [poolBall.vx, poolBall.vy] = [-poolBall.vy, -poolBall.vx];
+                            }
+                            break;
+                        case "topRight":
+                            // debugger
+                            if (Math.abs((poolBall.y - r / Math.sqrt(2)) + side.slope * (poolBall.x + r / Math.sqrt(2)) - side.intercept) < 1) {
+                                [poolBall.vx, poolBall.vy] = [poolBall.vy, poolBall.vx];
+                            }
+                            break;
+                        default: break;
+                    }
+                });
             }
             else {
-                if (poolBall.x - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[0] - innerBorder / 2) {
+                if (poolBall.x - BALL_CONSTANTS.RADIUS - 0.5<= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS + 0.5 >= this.innerBottomRight[0] - innerBorder / 2) {
                     poolBall.vx = -poolBall.vx;
                     // poolBall.vy *= energyLoss;
                 }
-                if (poolBall.y - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[1] + innerBorder / 2 || poolBall.y + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[1] - innerBorder / 2) {
+                if (poolBall.y - BALL_CONSTANTS.RADIUS - 0.5<= this.innerTopLeft[1] + innerBorder / 2 || poolBall.y + BALL_CONSTANTS.RADIUS + 0.5 >= this.innerBottomRight[1] - innerBorder / 2) {
                     poolBall.vy = -poolBall.vy;
                     // poolBall.vx *= energyLoss;
                 }
@@ -99,26 +141,26 @@ export default class EightBallPool {
     }
 
     isNearPocket(poolBall) {
-        const left = this.innerTopLeft[0] + innerBorder / 2 + BALL_CONSTANTS.RADIUS + 0.5;
-        const top = this.innerTopLeft[1] + innerBorder / 2 + BALL_CONSTANTS.RADIUS + 0.5;
-        const right = this.innerBottomRight[0] - innerBorder / 2 - BALL_CONSTANTS.RADIUS - 0.5;
-        const bottom = this.innerBottomRight[1] - innerBorder / 2 - BALL_CONSTANTS.RADIUS - 0.5;
-        const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS + 0.5;
-        const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS - 0.5;
+        const left = this.innerTopLeft[0] + innerBorder / 2 + 1.4 * bigRadius;
+        const top = this.innerTopLeft[1] + innerBorder / 2 + 1.4 * bigRadius;
+        const right = this.innerBottomRight[0] - innerBorder / 2 - 1.4 * bigRadius;
+        const bottom = this.innerBottomRight[1] - innerBorder / 2 - 1.4 * bigRadius;
+        const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder - BALL_CONSTANTS.RADIUS;
+        const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder + BALL_CONSTANTS.RADIUS;
 
         // returns the slopes & intercepts to check - (y + x - c): slope = +1 OR (y - x - c): slope = -1; dir is which side of circle hits line
-        if (poolBall.x <= left && poolBall.y <= top) return [{ slope: -1, intercept: 1.4 * bigRadius, dir: "bottomLeft"}, 
+        if (poolBall.x < left && poolBall.y < top) return [{ slope: -1, intercept: 1.4 * bigRadius, dir: "bottomLeft"}, 
                                                             { slope: -1, intercept: -1.4 * bigRadius, dir: "topRight"}];
-        if (poolBall.x <= left && poolBall.y >= bottom) return [{ slope: 1, intercept: this.dimensions.height - 1.4 * bigRadius, dir: "topLeft" },
+        if (poolBall.x < left && poolBall.y > bottom) return [{ slope: 1, intercept: this.dimensions.height - 1.4 * bigRadius, dir: "topLeft" },
                                                                 { slope: 1, intercept: this.dimensions.height + 1.4 * bigRadius, dir: "bottomRight"}];
-        if (poolBall.x >= right && poolBall.y <= top) return [{ slope: 1, intercept: this.dimensions.width - 1.4 * bigRadius, dir: "topLeft"},
+        if (poolBall.x > right && poolBall.y < top) return [{ slope: 1, intercept: this.dimensions.width - 1.4 * bigRadius, dir: "topLeft"},
                                                                 { slope: 1, intercept: this.dimensions.width + 1.4 * bigRadius, dir: "bottomRight"}];
-        if (poolBall.x >= right && poolBall.y >= bottom) return [{ slope: -1, intercept: this.dimensions.height - this.dimensions.width - 1.4 * bigRadius, dir: "topRight"},
+        if (poolBall.x > right && poolBall.y > bottom) return [{ slope: -1, intercept: this.dimensions.height - this.dimensions.width - 1.4 * bigRadius, dir: "topRight"},
                                                                 { slope: -1, intercept: this.dimensions.height - this.dimensions.width + 1.4 * bigRadius, dir: "bottomLeft"}];
-        if (poolBall.y <= top && poolBall.x >= midLeft && poolBall.x <= midRight) return [{ slope: 1, intercept: "TBD", dir: "topLeft"}, // START HERE ON THURSDAY
-                                                                                            { slope: -1, intercept: "TBD", dir: "topRight"}];
-        if (poolBall.y >= bottom && poolBall.x >= midLeft && poolBall.x <= midRight) return [{ slope: -1, intercept: "TBD", dir: "bottomLeft"},
-                                                                                            {slope: 1, intercept: "TBD", dir: "bottomRight"}];
+        if (poolBall.y < top - 1.4 * bigRadius + BALL_CONSTANTS.RADIUS && poolBall.x > midLeft && poolBall.x < midRight) return [{ slope: 1, intercept: 0.5 * this.dimensions.width - smallRadius + margin + outerBorder, dir: "topLeft"}, // START HERE ON THURSDAY
+                                                                                            { slope: -1, intercept: margin + outerBorder - (0.5 * this.dimensions.width + smallRadius), dir: "topRight"}];
+        if (poolBall.y > bottom + 1.4 * bigRadius - BALL_CONSTANTS.RADIUS && poolBall.x > midLeft && poolBall.x < midRight) return [{ slope: -1, intercept: this.dimensions.height - margin - outerBorder - (0.5 * this.dimensions.width - smallRadius), dir: "bottomLeft"},
+                                                                                            { slope: 1, intercept: 0.5 * this.dimensions.width + smallRadius + this.dimensions.height - margin - outerBorder, dir: "bottomRight"}];
 
         return null;
     }
@@ -172,7 +214,7 @@ export default class EightBallPool {
         const initVelocity = { x: 0, y: 0};
         const poolBalls = [];
         // initiate cue ball -- change initial x speed for testing
-        poolBalls[0] = new PoolBall(positions[0], {x: 10, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
+        poolBalls[0] = new PoolBall(positions[0], {x: 0 / FRAMES, y: 0 / FRAMES}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
         // initiate 8-ball
         poolBalls[5] = new PoolBall(positions[5], initVelocity, POOL_BALLS[8].number, POOL_BALLS[8].color, POOL_BALLS[8].marking);
 

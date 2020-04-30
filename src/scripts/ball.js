@@ -1,7 +1,7 @@
 export const BALL_CONSTANTS = {
     RADIUS: 8.5,
     BORDER_COLOR: "gray",
-    FRICTION: 0.005
+    FRICTION: 0.00002
 };
 
 export class PoolBall {
@@ -25,7 +25,7 @@ export class PoolBall {
     // checks if 'this' ball intersects 'that' ball given positions
     intersect(that) {
         const sqDist = (this.x - that.x) * (this.x - that.x) + (this.y - that.y) * (this.y - that.y);
-        return sqDist <= 4 * (BALL_CONSTANTS.RADIUS - 0.5) * (BALL_CONSTANTS.RADIUS - 0.5);
+        return sqDist <= 4 * (BALL_CONSTANTS.RADIUS) * (BALL_CONSTANTS.RADIUS);
     }
 
     drawBall(ctx) {
