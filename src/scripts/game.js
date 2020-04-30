@@ -98,10 +98,10 @@ export default class EightBallPool {
     }
 
     isNearPocket(poolBall) {
-        const left = this.innerTopLeft[0] + innerBorder + BALL_CONSTANTS.RADIUS;
-        const top = this.innerTopLeft[1] + innerBorder + BALL_CONSTANTS.RADIUS;
-        const right = this.innerBottomRight[0] - innerBorder - BALL_CONSTANTS.RADIUS;
-        const bottom = this.innerBottomRight[1] - innerBorder - BALL_CONSTANTS.RADIUS;
+        const left = this.innerTopLeft[0] + innerBorder / 2 + 1.4 * bigRadius + BALL_CONSTANTS.RADIUS;
+        const top = this.innerTopLeft[1] + innerBorder / 2 + 1.4 * bigRadius + BALL_CONSTANTS.RADIUS;
+        const right = this.innerBottomRight[0] - innerBorder / 2 - 1.4 * bigRadius - BALL_CONSTANTS.RADIUS;
+        const bottom = this.innerBottomRight[1] - innerBorder / 2 - 1.4 * bigRadius - BALL_CONSTANTS.RADIUS;
         const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS;
         const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS;
 
