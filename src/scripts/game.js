@@ -103,13 +103,19 @@ export default class EightBallPool {
         const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS;
         const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS;
 
-        // returns the slopes & intercepts to check - (y + x - c) OR (y - x - c)
-        if (poolBall.x <= left && poolBall.y <= top) return true;
-        if (poolBall.x <= left && poolBall.y >= bottom) return true;
-        if (poolBall.x >= right && poolBall.y <= top) return true;
-        if (poolBall.x >= right && poolBall.y >= bottom) return true;
-        if (poolBall.y <= top && poolBall.x >= midLeft && poolBall.x <= midRight) return true;
-        if (poolBall.y >= bottom && poolBall.x >= midLeft && poolBall.x <= midRight) return true;
+        // returns the slopes & intercepts to check - (y + x - c): slope = +1 OR (y - x - c): slope = -1; dir is which side of circle hits line
+        if (poolBall.x <= left && poolBall.y <= top) return [{ slope: -1, intercept: 1.4 * bigRadius, dir: "bottomLeft"}, 
+                                                            { slope: -1, intercept: -1.4 * bigRadius, dir: "topRight"}];
+        if (poolBall.x <= left && poolBall.y >= bottom) return [{ slope: 1, intercept: this.dimensions.height - 1.4 * bigRadius, dir: "topLeft" },
+                                                                { slope: 1, intercept: this.dimensions.height + 1.4 * bigRadius, dir: "bottomRight"}];
+        if (poolBall.x >= right && poolBall.y <= top) return [{ slope: 1, intercept: this.dimensions.width - 1.4 * bigRadius, dir: "topLeft"},
+                                                                { slope: 1, intercept: this.dimensions.width + 1.4 * bigRadius, dir: "bottomRight"}];
+        if (poolBall.x >= right && poolBall.y >= bottom) return [{ slope: -1, intercept: this.dimensions.height - this.dimensions.width - 1.4 * bigRadius, dir: "topRight"},
+                                                                { slope: -1, intercept: this.dimensions.height - this.dimensions.width + 1.4 * bigRadius, dir: "bottomLeft"}];
+        if (poolBall.y <= top && poolBall.x >= midLeft && poolBall.x <= midRight) return [{ slope: 1, intercept: "TBD", dir: "topLeft"}, // START HERE ON THURSDAY
+                                                                                            { slope: -1, intercept: "TBD", dir: "topRight"}];
+        if (poolBall.y >= bottom && poolBall.x >= midLeft && poolBall.x <= midRight) return [{ slope: -1, intercept: "TBD", dir: "bottomLeft"},
+                                                                                            {slope: 1, intercept: "TBD", dir: "bottomRight"}];
 
         return null;
     }
