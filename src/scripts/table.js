@@ -29,22 +29,59 @@ export class PoolTable {
         ctx.fill();
         ctx.lineWidth = outerBorder; // borders are drawn at the outline of the fill area 48 - 32 brown, 16 green trapezoids
         ctx.strokeStyle = "rgb(203, 113, 33)";
-        ctx.stroke();
+        ctx.strokeRect(...topLeft, ...widthHeight);
 
-        // inner border
-        const innerTopLeft = [margin + outerBorder + innerBorder / 2, margin + outerBorder + innerBorder / 2];
-        const innerBottomRight = [this.dimensions.width - margin - outerBorder - innerBorder / 2, this.dimensions.height - margin - outerBorder - innerBorder / 2];
-        const innerWidthHeight = [this.dimensions.width - margin * 2 - outerBorder * 2 - innerBorder, this.dimensions.height - margin * 2 - outerBorder * 2 - innerBorder];
-        ctx.strokeStyle = "yellowgreen";
-        ctx.lineWidth = innerBorder; // borders are drawn at the outline of the fill area 48 - 32 brown, 16 green trapezoids
-        ctx.strokeRect(...innerTopLeft, ...innerWidthHeight);
+        // inner borders
+        // const innerTopLeft = [margin + outerBorder + innerBorder / 2, margin + outerBorder + innerBorder / 2];
+        // const innerBottomRight = [this.dimensions.width - margin - outerBorder - innerBorder / 2, this.dimensions.height - margin - outerBorder - innerBorder / 2];
+        // const innerWidthHeight = [this.dimensions.width - margin * 2 - outerBorder * 2 - innerBorder, this.dimensions.height - margin * 2 - outerBorder * 2 - innerBorder];
+        // ctx.strokeStyle = "yellowgreen";
+        // ctx.lineWidth = innerBorder; // borders are drawn at the outline of the fill area 48 - 32 brown, 16 green trapezoids
+        // ctx.strokeRect(...innerTopLeft, ...innerWidthHeight);
+        this.innerBorders = [
+            [[margin + outerBorder, margin + outerBorder + 1.4 * bigRadius], 
+                [margin + outerBorder, this.dimensions.height - margin - outerBorder - 1.4 * bigRadius],
+                [margin + outerBorder + innerBorder, this.dimensions.height - margin - outerBorder - innerBorder - 1.4 * bigRadius],
+                [margin + outerBorder + innerBorder, margin + outerBorder + 1.4 * bigRadius + innerBorder]],
+            [[this.dimensions.width - margin - outerBorder, margin + outerBorder + 1.4 * bigRadius],
+                [this.dimensions.width - margin - outerBorder, this.dimensions.height - margin - outerBorder - 1.4 * bigRadius],
+                [this.dimensions.width - margin - outerBorder - innerBorder, this.dimensions.height - margin - outerBorder - innerBorder - 1.4 * bigRadius],
+                [this.dimensions.width - margin - outerBorder - innerBorder, margin + outerBorder + 1.4 * bigRadius + innerBorder]],
+            [[margin + outerBorder + 1.4 * bigRadius, margin + outerBorder],
+                [0.5 * this.dimensions.width - smallRadius, margin + outerBorder],
+                [0.5 * this.dimensions.width - smallRadius - innerBorder, margin + outerBorder + innerBorder],
+                [margin + outerBorder + 1.4 * bigRadius + innerBorder, margin + outerBorder + innerBorder]],
+            [[this.dimensions.width - margin - outerBorder - 1.4 * bigRadius, margin + outerBorder],
+                [0.5 * this.dimensions.width + smallRadius, margin + outerBorder],
+                [0.5 * this.dimensions.width + smallRadius + innerBorder, margin + outerBorder + innerBorder],
+                [this.dimensions.width - margin - outerBorder - 1.4 * bigRadius - innerBorder, margin + outerBorder + innerBorder]],
+            [[margin + outerBorder + 1.4 * bigRadius, this.dimensions.height - margin - outerBorder],
+                [0.5 * this.dimensions.width - smallRadius, this.dimensions.height - margin - outerBorder],
+                [0.5 * this.dimensions.width - smallRadius - innerBorder, this.dimensions.height - margin - outerBorder - innerBorder],
+                [margin + outerBorder + 1.4 * bigRadius + innerBorder, this.dimensions.height - margin - outerBorder - innerBorder]],
+            [[this.dimensions.width - margin - outerBorder - 1.4 * bigRadius, this.dimensions.height - margin - outerBorder],
+                [0.5 * this.dimensions.width + smallRadius, this.dimensions.height - margin - outerBorder],
+                [0.5 * this.dimensions.width + smallRadius + innerBorder, this.dimensions.height - margin - outerBorder - innerBorder],
+                [this.dimensions.width - margin - outerBorder - 1.4 * bigRadius - innerBorder, this.dimensions.height - margin - outerBorder - innerBorder]],
+        ];
+
+        this.innerBorders.forEach(innerBorder => {
+            ctx.beginPath();
+            ctx.moveTo(...innerBorder[0]);            
+            ctx.lineTo(...innerBorder[1]);            
+            ctx.lineTo(...innerBorder[2]);            
+            ctx.lineTo(...innerBorder[3]);            
+            ctx.closePath();
+            ctx.fillStyle = "yellowgreen";
+            ctx.fill();
+        });
 
         // pockets
         const bigPockets = [
-            [topLeft[0] + outerBorder / 2, topLeft[1] + outerBorder / 2],
-            [topLeft[0] + outerBorder / 2, bottomRight[1] - outerBorder / 2],
-            [bottomRight[0] - outerBorder / 2, topLeft[1] + outerBorder / 2],
-            [bottomRight[0] - outerBorder / 2, bottomRight[1] - outerBorder / 2]
+            [topLeft[0] + outerBorder * 0.75, topLeft[1] + outerBorder * 0.75],
+            [topLeft[0] + outerBorder * 0.75, bottomRight[1] - outerBorder * 0.75],
+            [bottomRight[0] - outerBorder * 0.75, topLeft[1] + outerBorder * 0.75],
+            [bottomRight[0] - outerBorder * 0.75, bottomRight[1] - outerBorder * 0.75]
         ];
 
         

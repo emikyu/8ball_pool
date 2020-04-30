@@ -20,6 +20,8 @@ const POOL_BALLS = [
     { number: 15, color: "brown", marking: "striped" }
 ];
 
+const energyLoss = 0.9;
+
 export default class EightBallPool {
     constructor(canvas) {
         this.ctx = canvas.getContext("2d");
@@ -29,13 +31,76 @@ export default class EightBallPool {
         this.innerTopLeft = [margin + outerBorder + innerBorder / 2, margin + outerBorder + innerBorder / 2];
         this.innerBottomRight = [this.dimensions.width - margin - outerBorder - innerBorder / 2, this.dimensions.height - margin - outerBorder - innerBorder / 2];
         this.innerWidthHeight = [this.dimensions.width - margin * 2 - outerBorder * 2 - innerBorder, this.dimensions.height - margin * 2 - outerBorder * 2 - innerBorder];
-    }
+
+    } 
 
     animate() {
         this.table.animate(this.ctx);
+
+        this.poolBalls.forEach(poolBall => {
+            poolBall.move(this.ctx);
+        });
+        this.checkCollisions();
+        this.checkBoundary();
         this.poolBalls.forEach(poolBall => {
             poolBall.animate(this.ctx);
         });
+
+        // console.log(this.poolBalls.map(poolBall => [poolBall.number, poolBall.vx, poolBall.vy]));
+
+        // if (this.poolBalls.every(poolBall => poolBall.vx === 0 && poolBall.vy === 0)) {
+        //     console.log("balls have stopped moving!");
+        // }
+        
+        if (this.running) requestAnimationFrame(this.animate.bind(this));
+    }
+
+    // check for collisions among pool balls
+    checkCollisions() {
+        this.poolBalls.forEach(poolBall => poolBall.colliding = false );
+        // goes through every unique pair of pool balls to check for collision
+        for (let i = 0; i < this.poolBalls.length; i++) {
+            for (let j = i + 1; j < this.poolBalls.length; j++) {
+                if (this.poolBalls[i].intersect(this.poolBalls[j])) {
+                    this.poolBalls[i].colliding = true;
+                    this.poolBalls[j].colliding = true;
+                    this.updateSpeed(this.poolBalls[i], this.poolBalls[j]);
+                }
+            } 
+        }
+    }
+
+    // check for collisions with pool table sides
+    checkBoundary() {
+        this.poolBalls.forEach(poolBall => {
+            if (poolBall.x - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[0] - innerBorder / 2) {
+                poolBall.vx = -poolBall.vx;
+            }
+            if (poolBall.y - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[1] + innerBorder / 2 || poolBall.y + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[1] - innerBorder / 2) {
+                poolBall.vy = -poolBall.vy;
+            }
+        });
+    }
+
+    updateSpeed(ballOne, ballTwo) {
+        debugger
+        const vColl = {x: ballTwo.x - ballOne.x, y: ballTwo.y - ballOne.y};
+        const d = Math.sqrt(vColl.x * vColl.x + vColl.y * vColl.y);
+        const vNColl = {x: vColl.x / d, y: vColl.y / d};
+
+        const vRelVel = {x: ballOne.vx - ballTwo.vx, y: ballOne.vy - ballTwo.vy};
+        
+        const dotProd = (vNColl.x * vRelVel.x + vNColl.y * vRelVel.y) * energyLoss;
+
+        debugger;
+        if (dotProd < 0) return;
+
+        ballOne.vx -= vNColl.x * dotProd;
+        ballOne.vy -= vNColl.y * dotProd;
+        ballTwo.vx += vNColl.x * dotProd;
+        ballTwo.vy += vNColl.y * dotProd;
+
+        debugger
     }
 
     rackPoolBalls() {
@@ -52,11 +117,12 @@ export default class EightBallPool {
             });
         });
 
+        const initVelocity = { x: 0, y: 0};
         const poolBalls = [];
         // initiate cue ball
-        poolBalls[0] = new PoolBall(positions[0], POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
+        poolBalls[0] = new PoolBall(positions[0], {x: 15, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
         // initiate 8-ball
-        poolBalls[5] = new PoolBall(positions[5], POOL_BALLS[8].number, POOL_BALLS[8].color, POOL_BALLS[8].marking);
+        poolBalls[5] = new PoolBall(positions[5], initVelocity, POOL_BALLS[8].number, POOL_BALLS[8].color, POOL_BALLS[8].marking);
 
 
         // initiate end corners - one striped and one solid
@@ -64,18 +130,17 @@ export default class EightBallPool {
         const stripedBalls = POOL_BALLS.slice(9);
         const randSolid = Math.floor(Math.random() * solidBalls.length);
         const randStriped = Math.floor(Math.random() * stripedBalls.length);
-        poolBalls[11] = new PoolBall(positions[11], solidBalls[randSolid].number, solidBalls[randSolid].color, solidBalls[randSolid].marking);
-        poolBalls[15] = new PoolBall(positions[15], stripedBalls[randStriped].number, stripedBalls[randStriped].color, stripedBalls[randStriped].marking);
+        poolBalls[11] = new PoolBall(positions[11], initVelocity, solidBalls[randSolid].number, solidBalls[randSolid].color, solidBalls[randSolid].marking);
+        poolBalls[15] = new PoolBall(positions[15], initVelocity, stripedBalls[randStriped].number, stripedBalls[randStriped].color, stripedBalls[randStriped].marking);
         
         solidBalls.splice(randSolid, 1);
         stripedBalls.splice(randStriped, 1);
         const tempBalls = solidBalls.concat(stripedBalls);
-        console.log(tempBalls);
 
         positions.forEach((pos, idx) => {
             if (!poolBalls[idx]) {
                 const randBall = Math.floor(Math.random() * tempBalls.length);
-                const poolBall = new PoolBall(pos, tempBalls[randBall].number, tempBalls[randBall].color, tempBalls[randBall].marking);
+                const poolBall = new PoolBall(pos, initVelocity, tempBalls[randBall].number, tempBalls[randBall].color, tempBalls[randBall].marking);
                 poolBalls[idx] = poolBall;
                 tempBalls.splice(randBall, 1);
             }
@@ -85,8 +150,15 @@ export default class EightBallPool {
     }
 
     restart() {
+        // this.running = false;
+        this.running = true;
         this.table = new PoolTable(this.dimensions);
         this.poolBalls = this.rackPoolBalls();
+        this.animate();
+    }
+
+    play() {
+        this.running = true;
         this.animate();
     }
 }
