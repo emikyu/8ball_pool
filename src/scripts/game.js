@@ -1,4 +1,4 @@
-import { PoolTable, innerBorder, outerBorder, margin} from './table';
+import { PoolTable, innerBorder, outerBorder, margin, bigRadius, smallRadius} from './table';
 import { BALL_CONSTANTS, PoolBall } from './ball';
 
 const POOL_BALLS = [
@@ -32,6 +32,8 @@ export default class EightBallPool {
         this.innerBottomRight = [this.dimensions.width - margin - outerBorder - innerBorder / 2, this.dimensions.height - margin - outerBorder - innerBorder / 2];
         this.innerWidthHeight = [this.dimensions.width - margin * 2 - outerBorder * 2 - innerBorder, this.dimensions.height - margin * 2 - outerBorder * 2 - innerBorder];
 
+        this.pocketedBalls = new Array(15);
+
     } 
 
     animate() {
@@ -41,7 +43,7 @@ export default class EightBallPool {
             poolBall.move(this.ctx);
         });
         this.checkCollisions();
-        this.checkBoundary();
+        this.checkPocketsAndBoundary();
         this.poolBalls.forEach(poolBall => {
             poolBall.animate(this.ctx);
         });
@@ -70,14 +72,56 @@ export default class EightBallPool {
         }
     }
 
-    // check for collisions with pool table sides
-    checkBoundary() {
-        this.poolBalls.forEach(poolBall => {
-            if (poolBall.x - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[0] - innerBorder / 2) {
-                poolBall.vx = -poolBall.vx;
+    // check for pocketing balls & collisions with pool table sides
+    checkPocketsAndBoundary() {
+        this.poolBalls.forEach((poolBall, idx) => {
+            const isNearPocket = this.isNearPocket(poolBall);
+
+            if (this.isPocketed(poolBall)) {
+                this.pocketedBalls.push(poolBall);
+                this.poolBalls[idx] = null;
+            } else if (isNearPocket) {
+
             }
-            if (poolBall.y - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[1] + innerBorder / 2 || poolBall.y + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[1] - innerBorder / 2) {
-                poolBall.vy = -poolBall.vy;
+            else {
+                if (poolBall.x - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[0] - innerBorder / 2) {
+                    poolBall.vx = -poolBall.vx;
+                }
+                if (poolBall.y - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[1] + innerBorder / 2 || poolBall.y + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[1] - innerBorder / 2) {
+                    poolBall.vy = -poolBall.vy;
+                }
+            }
+        });
+        this.poolBalls = this.poolBalls.filter(poolBall => poolBall);
+    }
+
+    isNearPocket(poolBall) {
+        const left = this.innerTopLeft[0] + innerBorder / 2 + BALL_CONSTANTS.RADIUS;
+        const top = this.innerTopLeft[1] + innerBorder / 2 + BALL_CONSTANTS.RADIUS;
+        const right = this.innerBottomRight[0] - innerBorder / 2 - BALL_CONSTANTS.RADIUS;
+        const bottom = this.innerBottomRight[1] - innerBorder / 2 - BALL_CONSTANTS.RADIUS;
+        const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS;
+        const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS;
+
+        // returns the slopes & intercepts to check - (y + x - c) OR (y - x - c)
+        if (poolBall.x <= left && poolBall.y <= top) return true;
+        if (poolBall.x <= left && poolBall.y >= bottom) return true;
+        if (poolBall.x >= right && poolBall.y <= top) return true;
+        if (poolBall.x >= right && poolBall.y >= bottom) return true;
+        if (poolBall.y <= top && poolBall.x >= midLeft && poolBall.x <= midRight) return true;
+        if (poolBall.y >= bottom && poolBall.x >= midLeft && poolBall.x <= midRight) return true;
+
+        return null;
+    }
+
+    isPocketed(poolBall) {
+        return this.table.pocketCenters.some(center => {
+            if ((center[0] - poolBall.x) * (center[0] - poolBall.x) + 
+                (center[1] - poolBall.y) * (center[1] - poolBall.y) <= 
+                center[2] * center[2]) {
+                    return true;
+            } else {
+                return false;
             }
         });
     }
@@ -119,8 +163,8 @@ export default class EightBallPool {
 
         const initVelocity = { x: 0, y: 0};
         const poolBalls = [];
-        // initiate cue ball
-        poolBalls[0] = new PoolBall(positions[0], {x: 15, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
+        // initiate cue ball -- change initial x speed for testing
+        poolBalls[0] = new PoolBall(positions[0], {x: 0, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
         // initiate 8-ball
         poolBalls[5] = new PoolBall(positions[5], initVelocity, POOL_BALLS[8].number, POOL_BALLS[8].color, POOL_BALLS[8].marking);
 
