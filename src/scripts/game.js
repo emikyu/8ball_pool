@@ -20,7 +20,7 @@ const POOL_BALLS = [
     { number: 15, color: "brown", marking: "striped" }
 ];
 
-const energyLoss = 0.9;
+// const energyLoss = 0.9;
 
 export default class EightBallPool {
     constructor(canvas) {
@@ -32,7 +32,7 @@ export default class EightBallPool {
         this.innerBottomRight = [this.dimensions.width - margin - outerBorder - innerBorder / 2, this.dimensions.height - margin - outerBorder - innerBorder / 2];
         this.innerWidthHeight = [this.dimensions.width - margin * 2 - outerBorder * 2 - innerBorder, this.dimensions.height - margin * 2 - outerBorder * 2 - innerBorder];
 
-        this.pocketedBalls = new Array(15);
+        this.pocketedBalls = [];
 
     } 
 
@@ -52,6 +52,7 @@ export default class EightBallPool {
 
         // if (this.poolBalls.every(poolBall => poolBall.vx === 0 && poolBall.vy === 0)) {
         //     console.log("balls have stopped moving!");
+        //     debugger
         // }
         
         if (this.running) requestAnimationFrame(this.animate.bind(this));
@@ -81,7 +82,7 @@ export default class EightBallPool {
                 this.pocketedBalls.push(poolBall);
                 this.poolBalls[idx] = null;
             } else if (isNearPocket) {
-
+                debugger
             }
             else {
                 if (poolBall.x - BALL_CONSTANTS.RADIUS <= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS >= this.innerBottomRight[0] - innerBorder / 2) {
@@ -98,12 +99,12 @@ export default class EightBallPool {
     }
 
     isNearPocket(poolBall) {
-        const left = this.innerTopLeft[0] + innerBorder / 2 + 1.4 * bigRadius + BALL_CONSTANTS.RADIUS;
-        const top = this.innerTopLeft[1] + innerBorder / 2 + 1.4 * bigRadius + BALL_CONSTANTS.RADIUS;
-        const right = this.innerBottomRight[0] - innerBorder / 2 - 1.4 * bigRadius - BALL_CONSTANTS.RADIUS;
-        const bottom = this.innerBottomRight[1] - innerBorder / 2 - 1.4 * bigRadius - BALL_CONSTANTS.RADIUS;
-        const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS;
-        const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS;
+        const left = this.innerTopLeft[0] + innerBorder / 2 + BALL_CONSTANTS.RADIUS + 0.5;
+        const top = this.innerTopLeft[1] + innerBorder / 2 + BALL_CONSTANTS.RADIUS + 0.5;
+        const right = this.innerBottomRight[0] - innerBorder / 2 - BALL_CONSTANTS.RADIUS - 0.5;
+        const bottom = this.innerBottomRight[1] - innerBorder / 2 - BALL_CONSTANTS.RADIUS - 0.5;
+        const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder + BALL_CONSTANTS.RADIUS + 0.5;
+        const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder - BALL_CONSTANTS.RADIUS - 0.5;
 
         // returns the slopes & intercepts to check - (y + x - c): slope = +1 OR (y - x - c): slope = -1; dir is which side of circle hits line
         if (poolBall.x <= left && poolBall.y <= top) return [{ slope: -1, intercept: 1.4 * bigRadius, dir: "bottomLeft"}, 
@@ -135,24 +136,23 @@ export default class EightBallPool {
     }
 
     updateSpeed(ballOne, ballTwo) {
-        debugger
         const vColl = {x: ballTwo.x - ballOne.x, y: ballTwo.y - ballOne.y};
         const d = Math.sqrt(vColl.x * vColl.x + vColl.y * vColl.y);
         const vNColl = {x: vColl.x / d, y: vColl.y / d};
-
+        
         const vRelVel = {x: ballOne.vx - ballTwo.vx, y: ballOne.vy - ballTwo.vy};
         
-        const dotProd = (vNColl.x * vRelVel.x + vNColl.y * vRelVel.y) * energyLoss;
-
-        debugger;
+        const dotProd = vNColl.x * vRelVel.x + vNColl.y * vRelVel.y;
+        
         if (dotProd < 0) return;
+        // console.log(ballOne.vy + ballTwo.vy);
 
         ballOne.vx -= vNColl.x * dotProd;
         ballOne.vy -= vNColl.y * dotProd;
         ballTwo.vx += vNColl.x * dotProd;
         ballTwo.vy += vNColl.y * dotProd;
-
-        debugger
+        // console.log(ballOne.vy + ballTwo.vy);
+        // console.log("--");
     }
 
     rackPoolBalls() {
@@ -172,7 +172,7 @@ export default class EightBallPool {
         const initVelocity = { x: 0, y: 0};
         const poolBalls = [];
         // initiate cue ball -- change initial x speed for testing
-        poolBalls[0] = new PoolBall(positions[0], {x: 15, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
+        poolBalls[0] = new PoolBall(positions[0], {x: 10, y: 0}, POOL_BALLS[0].number, POOL_BALLS[0].color, POOL_BALLS[0].marking);
         // initiate 8-ball
         poolBalls[5] = new PoolBall(positions[5], initVelocity, POOL_BALLS[8].number, POOL_BALLS[8].color, POOL_BALLS[8].marking);
 
