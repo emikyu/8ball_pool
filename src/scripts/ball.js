@@ -1,7 +1,7 @@
 export const BALL_CONSTANTS = {
     RADIUS: 8.5,
     BORDER_COLOR: "gray",
-    FRICTION: 0.00002
+    FRICTION: 0.00001
 };
 
 export class PoolBall {
@@ -65,7 +65,7 @@ export class PoolBall {
             ctx.arc(this.x, this.y, BALL_CONSTANTS.RADIUS * .6, 0, 2 * Math.PI);
             ctx.fill();
 
-            ctx.font = "bold 8px Arial";
+            ctx.font = "bold 8px sans-serif";
             ctx.textAlign = "center";
             ctx.fillStyle = "black";
             ctx.fillText(this.number, this.x, this.y + 2.5);
