@@ -272,6 +272,8 @@ export default class EightBallPool {
             const r = BALL_CONSTANTS.RADIUS;
 
             if (this.isPocketed(poolBall)) {
+                poolBall.vx = 0;
+                poolBall.vy = 0;
                 this.currentPocketed.push(poolBall);
                 this.poolBalls[idx] = null;
             } else if (isNearPocket) {
@@ -279,25 +281,25 @@ export default class EightBallPool {
                     switch(side.dir) {
                         case "bottomLeft":
                             // debugger
-                            if (Math.abs((poolBall.y + r / Math.sqrt(2)) + side.slope * (poolBall.x - r / Math.sqrt(2)) - side.intercept) < 1) {
+                            if (Math.abs((poolBall.y + r / Math.sqrt(2)) + side.slope * (poolBall.x - r / Math.sqrt(2)) - side.intercept) < 5) {
                                 [poolBall.vx, poolBall.vy] = [poolBall.vy, poolBall.vx];
                             }
                             break;
                         case "bottomRight":
                             // debugger
-                            if (Math.abs((poolBall.y + r / Math.sqrt(2)) + side.slope * (poolBall.x + r / Math.sqrt(2)) - side.intercept) < 1) {
+                            if (Math.abs((poolBall.y + r / Math.sqrt(2)) + side.slope * (poolBall.x + r / Math.sqrt(2)) - side.intercept) < 5) {
                                 [poolBall.vx, poolBall.vy] = [-poolBall.vy, -poolBall.vx];
                             }
                             break;
                         case "topLeft":
                             // debugger
-                            if (Math.abs((poolBall.y - r / Math.sqrt(2)) + side.slope * (poolBall.x - r / Math.sqrt(2)) - side.intercept) < 1) {
+                            if (Math.abs((poolBall.y - r / Math.sqrt(2)) + side.slope * (poolBall.x - r / Math.sqrt(2)) - side.intercept) < 5) {
                                 [poolBall.vx, poolBall.vy] = [-poolBall.vy, -poolBall.vx];
                             }
                             break;
                         case "topRight":
                             // debugger
-                            if (Math.abs((poolBall.y - r / Math.sqrt(2)) + side.slope * (poolBall.x + r / Math.sqrt(2)) - side.intercept) < 1) {
+                            if (Math.abs((poolBall.y - r / Math.sqrt(2)) + side.slope * (poolBall.x + r / Math.sqrt(2)) - side.intercept) < 5) {
                                 [poolBall.vx, poolBall.vy] = [poolBall.vy, poolBall.vx];
                             }
                             break;
