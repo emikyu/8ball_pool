@@ -12,6 +12,9 @@
             <div class="restart-game" id="restart-game">
                 Restart Game
             </div>
+            <div class="modal-trigger" id="modal-trigger">
+                ?
+            </div>
             <div class="nav-links">
                 <ul>
                     <li>
@@ -30,6 +33,60 @@
         <!-- <canvas id="pool-game" height="375" width="655"></canvas> -->
         <canvas id="pool-game" height="675" width="955">
         </canvas>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="close-button" id="close-button">&times;</div>
+            <div><h2> How to Play </h2>
+            <ol>
+                <li>Game Mechanics for Each Turn:
+                    <ol>
+                        <li>
+                            Mouse over the game area to set the aim direction of the cue stick and the speed for hitting the cue ball (proportional to length of cue stick).
+                        </li>
+                        <li>
+                            Once direction and speed have been decided, click to shoot at the cue ball.
+                        </li>
+                    </ol>
+                </li>
+                <li>Game Play Instructions:
+                    <ol>
+                        <li>
+                            Prior to marking assignment, players alternate and try to pocket pool balls until a player pockets a numbered ball (other than 8-ball).
+                        </li>
+                        <li>
+                            Upon the first pocketed ball, players are automatically assigned a marking (striped vs. solid), noted below pool table.
+                        </li>
+                        <li>
+                            Afterwards, each player will continue their turn if they pocket at least one ball of their respective marking without <b>scratching</b> or <b>losing</b> (see below).
+                        </li>
+                        <li>
+                            <b>Winning: </b>Player wins if they first pocket all 7 balls of their respective marking (minus 8-ball), prior to pocketing the 8-ball. Player wins once 8-ball is pocketed.
+                        </li>
+                        <li>
+                            <b>Losing </b>A player loses if they pocket the 8-ball any time in the game, prior to pocketing all 7 balls of their respective marking.
+                        </li>
+                    </ol>
+                </li>
+                <li>Scratching Scenarios:
+                    <ol>
+                        <li>
+                            Cue ball is pocketed.
+                        </li>
+                        <li>
+                            Cue ball hits a ball with the opponent's marking first.
+                        </li>
+                        <li>
+                            Cue ball hits 8-ball first, when the table still has balls with the player's marking.
+                        </li>
+                        <li>
+                            No balls with the player's marking is pocketed.
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+            <div>
+        </div>
     </div>
     <script type="application/javascript" src="./dist/main.js" defer></script>
 </body>

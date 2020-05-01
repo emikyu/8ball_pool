@@ -11,13 +11,18 @@ div {
     font-family: sans-serif;
 }
 
-h1 {
+h1, h2 {
     font-family: sans-serif;
     line-height: 0.6;
     padding-top: 20px;
     font-size: 48px;
     font-weight: 600;
     color: rgb(175, 109, 175);
+}
+
+h2 {
+    font-size: 28px;
+    padding-top: 0;
 }
 
 .game-container {
@@ -41,24 +46,27 @@ h1 {
 }
 
 .restart-game {
-    line-height: 45px;
+    line-height: 42px;
     background-color: rgb(107, 76, 107);
     font-weight: 600;
     color: white;
     border-radius: 5px;
     transition: 0.3s ease all;
-    border: none;
+    border: 2px solid rgb(107, 76, 107);
+    box-sizing: border-box;
 }
 
 .restart-game:hover {
     cursor: pointer;
-    background-color: rgb(175, 109, 175);
+    background-color: rgb(216, 185, 216);;
+    color: rgb(107, 76, 107);
 }
 
 .nav-links {
     border: 1px solid rgb(107, 76, 107);
     background-color: rgb(255, 239, 255);
     border-radius: 5px;
+    display: flex;
 }
 
 .nav-links > ul {
@@ -87,4 +95,93 @@ li:last-child {
 
 .nav-links a:hover {
     text-decoration: underline;
+}
+
+.modal-trigger {
+    max-width: 40px;
+    height: 40px;
+    border: 2px solid rgb(107, 76, 107);
+    background-color: rgb(255, 239, 255);;
+    color: rgb(107, 76, 107);
+    font-size: 36px;
+    font-weight: bold;
+    line-height: 40px;
+    border-radius: 50%;
+    transition: 0.3s ease all;
+    cursor: pointer;
+}
+
+#modal-trigger:hover, #modal-trigger:focus {
+    background-color: rgb(216, 185, 216);
+    cursor: pointer;
+}
+
+
+.modal {
+  display: none;
+  position: fixed; 
+  padding-top: 130px;
+  left: 0; 
+  top: 0;
+  width: 100%;
+  height: 100%; 
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.modal-content {
+  position: relative; 
+  background-color: white;
+  padding-right: 20px;
+  padding-bottom: 20px; 
+  margin: auto; 
+  width: 655px;
+  border: 1px solid thistle;
+  border-radius: 5px;
+  box-shadow: 0 0 10px gray;
+  z-index: 11;
+}
+
+.modal-content ol li {
+    text-align: left;
+    padding: 5px 0 5px;
+    font-size: 16px;
+    border: none;
+    color: rgb(64,64,64);
+    font-weight: bold;
+}
+
+ol {
+    margin: 0;
+}
+
+li > ol {
+    list-style: lower-alpha;
+}
+
+.modal-content li > ol > li {
+    font-weight: 400;
+}
+
+.close-button {
+    padding: 0;
+    position: absolute;
+    right: 15px;
+    font-size: 28px;
+    width: 28px;
+    color: rgb(64,64,64);
+    top: 15px;
+    z-index: 13;
+    cursor: pointer;
+}
+
+#close-button:hover, #close-button:focus {
+    color: gray;
+    transition: 0.3 ease all;
+    cursor: pointer;
+}
+
+.show {
+    display: block;
 }
