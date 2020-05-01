@@ -11,7 +11,7 @@ export class PoolTable {
     }
 
     drawBackground(ctx) {
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = "rgb(235, 220, 235)";
         ctx.fillRect(0, 0, this.dimensions.width, this.dimensions.height);
 
         // takes into account the 150 outer border & half of the table border at 16

@@ -194,60 +194,47 @@ export default class EightBallPool {
 
     takeTurn() {
         this.canvas.addEventListener('mousemove', this.handleMouseMove);
-
-        // // debugger
-        // const that = this;        
-        // this.canvas.addEventListener('mousemove', function handleMouseMove(e) {
-        //     // debugger
-        //     that.table.animate(that.ctx);
-        //     that.poolBalls.forEach(poolBall => {
-        //         poolBall.animate(that.ctx);
-        //     });
-        //     that.drawGameStatus();
-
-        //     const cRect = that.canvas.getBoundingClientRect();
-        //     const x = e.clientX - cRect.left * (that.canvas.width / cRect.width);
-        //     const y = e.clientY - cRect.top * (that.canvas.height / cRect.height);
-
-        //     that.ctx.beginPath();
-        //     that.ctx.moveTo(that.poolBalls[0].x, that.poolBalls[0].y);
-        //     that.ctx.lineTo(x, y);
-        //     that.ctx.closePath();
-        //     that.ctx.lineWidth = 7;
-        //     that.ctx.strokeStyle = "maroon";
-        //     that.ctx.stroke();
-        //     that.poolBalls[0].animate(that.ctx);
-
-        //     that.canvas.addEventListener('click', function handleClick(e) {
-        //         // debugger
-        //         let vx = (that.poolBalls[0].x - x) / (2 * margin);
-        //         let vy = (that.poolBalls[0].y - y) / (2 * margin);
-        //         const v = Math.sqrt(vx * vx + vy * vy);
-        //         if (v > BALL_CONSTANTS.RADIUS / FRAMES) {
-        //             vx = vx / v * BALL_CONSTANTS.RADIUS / FRAMES;
-        //             vy = vy / v * BALL_CONSTANTS.RADIUS / FRAMES;
-        //         }
-        //         if (!that.running) that.play();
-        //         that.poolBalls[0].vx = vx;
-        //         that.poolBalls[0].vy = vy;
-
-        //     });
-        // });
     }
 
     drawGameStatus() {
         // draw game status
+
         this.ctx.font = "bold 36px sans-serif";
         this.ctx.textAlign = "center";
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = "rgb(64,64,64)";
         this.ctx.fillText(this.gameStatus, this.dimensions.width / 2, margin * 0.9);
 
+        const padding = 5;
+        const r = BALL_CONSTANTS.RADIUS;
 
-        this.ctx.font = "bold 24px sans-serif";
-        this.ctx.textAlign = "center";
-        this.ctx.fillStyle = "black";
-        this.ctx.fillText("Pocketed Pool Balls", this.dimensions.width / 2, this.dimensions.height - margin * 0.75);
-        this.ctx.fillRect(margin, this.dimensions.height - 0.7 * margin, this.dimensions.width - 2 * margin, 0.25 * margin);
+        this.ctx.font = "18px sans-serif";
+        this.ctx.textAlign = "left";
+        this.ctx.fillStyle = "rgb(64,64,64)";
+        this.ctx.fillText(`Player 1's Pocketed Balls${this.playerOne.marking ? ` (${this.playerOne.marking})` : ""}`, margin, this.dimensions.height - margin * 0.75);
+        this.ctx.fillStyle = "thistle";
+        this.ctx.fillRect(margin, this.dimensions.height - 0.7 * margin, (this.dimensions.width - 2 * margin) * 0.45, 0.25 * margin);
+        if (this.playerOne.marking) this.pocketedBalls[this.playerOne.marking].forEach((poolBall, idx) => {
+            poolBall.x = margin + (idx + 1) * padding + (idx * 2 + 1) * r;
+            poolBall.y = this.dimensions.height - 0.7 * margin + (0.25 * margin) / 2;
+            poolBall.vx = 0;
+            poolBall.vy = 0;
+            poolBall.drawBall(this.ctx);
+        });
+
+
+        this.ctx.font = "18px sans-serif";
+        this.ctx.textAlign = "right";
+        this.ctx.fillStyle = "rgb(64,64,64)";
+        this.ctx.fillText(`Player 2's Pocketed Balls${this.playerTwo.marking ? ` (${this.playerTwo.marking})` : ""}`, this.dimensions.width - margin, this.dimensions.height - margin * 0.75);
+        this.ctx.fillStyle = "thistle";
+        this.ctx.fillRect(this.dimensions.width - margin - (this.dimensions.width - 2 * margin) * 0.45, this.dimensions.height - 0.7 * margin, (this.dimensions.width - 2 * margin) * 0.45, 0.25 * margin);
+        if (this.playerTwo.marking) this.pocketedBalls[this.playerTwo.marking].forEach((poolBall, idx) => {
+            poolBall.x = this.dimensions.width - (margin + (idx + 1) * padding + (idx * 2 + 1) * r);
+            poolBall.y = this.dimensions.height - 0.7 * margin + (0.25 * margin) / 2;
+            poolBall.vx = 0;
+            poolBall.vy = 0;
+            poolBall.drawBall(this.ctx);
+        });
     }
 
     // check for collisions among pool balls
