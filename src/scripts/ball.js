@@ -7,9 +7,6 @@ export const BALL_CONSTANTS = {
 export class PoolBall {
     constructor(position, velocity, number, color, marking) {
         this.vx = velocity.x; 
-        // if (color === "white") {
-        //     this.vx = 1; // for testing animation
-        // }
         this.vy = velocity.y;
 
         this.x = position.x;
