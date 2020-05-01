@@ -150,7 +150,7 @@ export default class EightBallPool {
         const cRect = this.canvas.getBoundingClientRect();
         const x = e.clientX - cRect.left * (this.canvas.width / cRect.width);
         const y = e.clientY - cRect.top * (this.canvas.height / cRect.height);
-        // debugger
+
         let vx = (this.poolBalls[0].x - x) / (2 * margin);
         let vy = (this.poolBalls[0].y - y) / (2 * margin);
         const v = Math.sqrt(vx * vx + vy * vy);
@@ -308,7 +308,7 @@ export default class EightBallPool {
                 });
             }
             else {
-                debugger
+                // debugger
                 if (poolBall.x - BALL_CONSTANTS.RADIUS - 0.5<= this.innerTopLeft[0] + innerBorder / 2 || poolBall.x + BALL_CONSTANTS.RADIUS + 0.5 >= this.innerBottomRight[0] - innerBorder / 2) {
                     poolBall.vx = -poolBall.vx;
                     // poolBall.vy *= energyLoss;
@@ -330,7 +330,7 @@ export default class EightBallPool {
         const midLeft = 0.5 * this.dimensions.width - smallRadius - innerBorder;
         const midRight = 0.5 * this.dimensions.width + smallRadius + innerBorder;
 
-        debugger
+        // debugger
         // returns the slopes & intercepts to check - (y + x - c): slope = +1 OR (y - x - c): slope = -1; dir is which side of circle hits line
         if (poolBall.x < left && poolBall.y < top) return [{ slope: -1, intercept: 1.4 * bigRadius, dir: "bottomLeft"}, 
                                                             { slope: -1, intercept: -1.4 * bigRadius, dir: "topRight"}];
