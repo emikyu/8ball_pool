@@ -155,8 +155,8 @@ export default class EightBallPool {
         let vy = (this.poolBalls[0].y - y) / (2 * margin);
         const v = Math.sqrt(vx * vx + vy * vy);
         if (v > BALL_CONSTANTS.RADIUS / FRAMES) {
-            vx = vx / v * BALL_CONSTANTS.RADIUS / FRAMES;
-            vy = vy / v * BALL_CONSTANTS.RADIUS / FRAMES;
+            vx = vx / v * BALL_CONSTANTS.RADIUS / FRAMES * 0.8;
+            vy = vy / v * BALL_CONSTANTS.RADIUS / FRAMES * 0.8;
         }
         this.poolBalls[0].vx = vx;
         this.poolBalls[0].vy = vy;
@@ -240,7 +240,7 @@ export default class EightBallPool {
         this.ctx.font = "bold 36px sans-serif";
         this.ctx.textAlign = "center";
         this.ctx.fillStyle = "black";
-        this.ctx.fillText(this.gameStatus, this.dimensions.width / 2, margin * 0.75);
+        this.ctx.fillText(this.gameStatus, this.dimensions.width / 2, margin * 0.9);
 
 
         this.ctx.font = "bold 24px sans-serif";
@@ -264,7 +264,10 @@ export default class EightBallPool {
                     if (i === 0 && this.currentPlayer.marking && this.scratched === null) {
                         if (this.poolBalls[j].marking != this.currentPlayer.marking) {
                             this.scratched = true;
-                        } else {
+                        } else if (this.poolBalls[j].number === "8" && this.pocketedBalls[this.currentPlayer.marking].length < 7) {
+                            this.scratched = true;
+                        }
+                        else {
                             this.scratched = false;
                         }
                     }
