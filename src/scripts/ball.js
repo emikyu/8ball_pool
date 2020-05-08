@@ -68,16 +68,7 @@ export class PoolBall {
             ctx.fillText(this.number, this.x, this.y + 2.5);
         }
 
-        // // test code
-        // if (this.colliding) {
-        //     ctx.fillStyle = "pink";
-        //     ctx.beginPath();
-        //     ctx.arc(this.x, this.y, BALL_CONSTANTS.RADIUS, 0, 2 * Math.PI);
-        //     ctx.fill();
-        //     ctx.lineWidth = 0.5;
-        //     ctx.strokeStyle = BALL_CONSTANTS.BORDER_COLOR;
-        //     ctx.stroke();
-        // }        
+        
     }
 
     move() {
