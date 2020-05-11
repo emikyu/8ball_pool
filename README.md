@@ -30,7 +30,7 @@ The cue stick will be movable via mouse moment, where clicking the mouse indicat
 
 Below the pool table, the screen will display the balls already pocketed by either of the players.
 
-![8ball pool wireframe](/8ball_wireframe.png)
+![8ball pool wireframe](/final_wireframe.png)
 
 ## 4. Architecture and Technology
 
