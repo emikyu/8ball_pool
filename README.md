@@ -10,7 +10,7 @@ The game begins with 15 colored balls numbered 1-15 (7 solid, 7 striped, and 8-b
 
 See the gif below for a demonstration of the gameplay mechanics.
 
-[TODO: ADD DEMO GIF]
+![8ball pool demo animation](/8ball_demo.gif)
 
 ## 2. Functionality and MVPs
 
