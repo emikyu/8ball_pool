@@ -68,7 +68,6 @@ export default class EightBallPool {
             poolBall.animate(this.ctx);
         });
 
-        // console.log(this.poolBalls.map(poolBall => [poolBall.number, poolBall.vx, poolBall.vy]));
 
         if (this.poolBalls.every(poolBall => poolBall.vx === 0 && poolBall.vy === 0)) {
             this.running = false;
@@ -123,13 +122,15 @@ export default class EightBallPool {
             this.gameStatus = `Eight ball was pocketed. Player ${this.currentPlayer.id} lost!`;
             return false;
         } else if (cueBall) {
-            this.poolBalls = [cueBall].concat(this.poolBalls); // always have cueBall first
+            this.poolBalls = [cueBall].concat(this.poolBalls); // always hit cueBall first
             this.currentPlayer = this.currentPlayer.id === 1 ? this.playerTwo : this.playerOne;
             this.gameStatus = `Scratch. Player ${this.currentPlayer.id}'s Turn`;
-        } else if (this.currentPocketed.length === 0 || this.scratched) {
-            if (this.scratched) this.scratched = null;
+        } else if (this.scratched) {
             this.currentPlayer = this.currentPlayer.id === 1 ? this.playerTwo : this.playerOne;
             this.gameStatus = `Scratch. Player ${this.currentPlayer.id}'s Turn`;
+        } else if (this.currentPocketed.length === 0) {
+            this.currentPlayer = this.currentPlayer.id === 1 ? this.playerTwo : this.playerOne;
+            this.gameStatus = `No balls pocketed. Player ${this.currentPlayer.id}'s Turn`;
         } else if (!this.currentPlayer.marking) {
             this.currentPlayer.marking = this.currentPocketed[0].marking;
             const otherPlayer = this.currentPlayer.id === 1 ? this.playerTwo : this.playerOne;
@@ -138,10 +139,13 @@ export default class EightBallPool {
         } else if (hitCount) {
             this.gameStatus = `Player ${this.currentPlayer.id}'s Turn`;
         } else {
+            // debugger
+            const prevMarking = this.currentPlayer.marking;
             this.currentPlayer = this.currentPlayer.id === 1 ? this.playerTwo : this.playerOne;
-            this.gameStatus = `Scratch. Player ${this.currentPlayer.id}'s Turn`;
+            this.gameStatus = `No ${prevMarking} balls pocketed. Player ${this.currentPlayer.id}'s Turn`;
         }
 
+        this.scratched = null;
         this.currentPocketed = [];
         return true;
     };
@@ -249,9 +253,9 @@ export default class EightBallPool {
                     
                     // check if scratched
                     if (i === 0 && this.currentPlayer.marking && this.scratched === null) {
-                        if (this.poolBalls[j].marking != this.currentPlayer.marking) {
+                        if (this.poolBalls[j].marking !== this.currentPlayer.marking) {
                             this.scratched = true;
-                        } else if (this.poolBalls[j].number === "8" && this.pocketedBalls[this.currentPlayer.marking].length < 7) {
+                        } else if (this.poolBalls[j].number === 8 && this.pocketedBalls[this.currentPlayer.marking].length < 7) {
                             this.scratched = true;
                         }
                         else {
