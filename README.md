@@ -50,7 +50,66 @@ In addition to the entry file, the following scripts are employed to support the
 
 * game.js: The script contains the connection between user interaction and the effects on the Table and Balls, including logic for rendering HTML5 Canvas elements to the DOM. It also tracks the state of the game and holds an array of Ball objects. It is be responsible for checking and updating the position of each Ball, once the player hits the cue ball during their turn.
 
-## 5. Implementation Timeline
+## 5. Highlighted Feature
+The main interaction point between players and the game state occurs when players a) position the cue stick and b) confirm the direction and speed for hitting the cue ball.
+
+To enable a player to view where they have placed the cue stick as the mouse cursor moves, the table, pool balls, and game status have to be redrawn in that order. After this, the new cue stick position becomes rendered. The process continues until a click event happens, which indicates that the current player confirmed the direction and speed for hitting the cue ball.
+
+```javascript
+handleMouseMove(e) {
+    this.table.animate(this.ctx);
+    this.poolBalls.forEach(poolBall => {
+        poolBall.animate(this.ctx);
+    });
+    this.drawGameStatus();
+
+    const cRect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - cRect.left * (this.canvas.width / cRect.width);
+    const y = e.clientY - cRect.top * (this.canvas.height / cRect.height);
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.poolBalls[0].x, this.poolBalls[0].y);
+    this.ctx.lineTo(x, y);
+    this.ctx.closePath();
+    this.ctx.lineWidth = 7;
+    this.ctx.strokeStyle = "maroon";
+    this.ctx.stroke();
+    this.poolBalls[0].animate(this.ctx);
+
+    this.canvas.addEventListener('click', this.handleClick);
+};
+```
+
+Once a player clicks on the game area, the x- and y- distance from the center of the cue ball are captured and rescaled to proportionally equate to the new velocity vector for the cue ball (up to a capped speed).
+
+From there, the backend game logic would resolve any collisions and velocity/position adjustments for all active pool balls until everything stops moving due to friction. While any of the pool balls is still in motion, both the 'mousemove' and 'click' event handlers are off to prevent the cue stick from displaying and the player from manipulating the cue ball's movement until the turn resolves.
+
+```javascript
+handleClick(e) {
+    const cRect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - cRect.left * (this.canvas.width / cRect.width);
+    const y = e.clientY - cRect.top * (this.canvas.height / cRect.height);
+
+    let vx = (this.poolBalls[0].x - x) / (2 * margin);
+    let vy = (this.poolBalls[0].y - y) / (2 * margin);
+    const v = Math.sqrt(vx * vx + vy * vy);
+    if (v > BALL_CONSTANTS.RADIUS / FRAMES) {
+        vx = vx / v * BALL_CONSTANTS.RADIUS / FRAMES * 0.8;
+        vy = vy / v * BALL_CONSTANTS.RADIUS / FRAMES * 0.8;
+    }
+    this.poolBalls[0].vx = vx;
+    this.poolBalls[0].vy = vy;
+
+    this.canvas.removeEventListener('click', this.handleClick);
+    this.canvas.removeEventListener('mousemove', this.handleMouseMove);
+
+    if (!this.running) this.play();
+};
+```
+
+This structure separates the concerns of visualizing the cue stick and recording the result of the interaction itself. For future enhancements, I can further customize the visual display of the cue stick without interfering with how the direction and speed of the shot get recorded.
+
+## 6. Implementation Timeline
 
 ### Day 1
 - Set up webpack and Node modules
@@ -74,7 +133,7 @@ In addition to the entry file, the following scripts are employed to support the
 - Styled front end of the game to a polished state
 - Added "How to Play" modal
 
-## 6. Bonus Features
+## 7. Bonus Features
 
 Potential features to explore in the future:
 * Incorporate in more complex game logic to more closely align to eight-ball pool rules (e.g., dealing with scratches)
