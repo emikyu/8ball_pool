@@ -1,5 +1,7 @@
 # Eight-Ball Pool
 
+[Live Demo](https://emikyu.github.io/8ball_pool/)
+
 ## 1. Background and Overview
 
 Eight-ball pool is the most popular form of billiards, played on a six-pocket table. Players play the game using a cue stick to hit and move balls across the table and pocketing them.
